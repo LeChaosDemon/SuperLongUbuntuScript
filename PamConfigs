@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# exit on any error
+set -e
+
+# modify /etc/pam.d/common-password for password policy
+configure_password_policy() {
+    echo "Configuring password policy..."
+
+    # Backup the existing PAM common-password file
+    cp /etc/pam.d/common-password /etc/pam.d/common-password.bak
+
+    # Configure password policy (e.g., minimum length, complexity)
+    sed -i 's/^password .*/retry=4 minlen=9 difok=4 lcredit=-2 ucredit=-2 dcredit=-1 ocredit=-1 reject_username enforce_for_root/'
+/etc/pam.d/common-password
+    echo "Password policy configured with minimum length 9."
+}
+
+#  modify /etc/pam.d/common-account for account lockout
+configure_account_lockout() {
+    echo "Configuring account lockout..."
+
+    # Backup the existing PAM common-account file
+    cp /etc/pam.d/common-account /etc/pam.d/common-account.bak
+
+    # Enable account lockout after 5 failed attempts and lockout duration of 300 seconds
+    sed -i '/^account/ a\account required pam_tally2.so onerr=fail deny=5 unlock_time=300' /etc/pam.d/common-account
+    echo "Account lockout policy configured: 5 failed login attempts, 5-minute lockout."
+}
+
+#  modify /etc/pam.d/common-auth for authentication
+configure_authentication_policy() {
+    echo "Configuring authentication policy..."
+
+    # Backup the existing PAM common-auth file
+    cp /etc/pam.d/common-auth /etc/pam.d/common-auth.bak
+
+    # Ensure account is locked after 5 failed attempts
+    sed -i '/^auth/ a\auth required pam_tally2.so onerr=fail deny=5 unlock_time=300' /etc/pam.d/common-auth
+    echo "Authentication policy configured: 5 failed login attempts, 5-minute lockout."
+}
+
+# modify /etc/pam.d/common-session for session management
+configure_session_policy() {
+    echo "Configuring session management policy..."
+
+    # Backup the existing PAM common-session file
+    cp /etc/pam.d/common-session /etc/pam.d/common-session.bak
+
+    # Enforce password expiration settings
+    sed -i 's/^session\s\+required\s\+pam_unix.so/session required pam_unix.so umask=0777/' /etc/pam.d/common-session
+    echo "Session policy configured."
+}
+
+# configure password aging settings
+configure_password_aging() {
+    echo "Configuring password aging policy..."
+
+    # Backup the current password aging settings
+    cp /etc/login.defs /etc/login.defs.bak
+
+    # Enforce password expiration every 60 days, warn users 7 days before expiration, and set the minimum password age to 7 days
+    sed -i 's/^PASS_MAX_DAYS\s\+99999/PASS_MAX_DAYS  90/' /etc/login.defs
+    sed -i 's/^PASS_WARN_AGE\s\+7/PASS_WARN_AGE   5/' /etc/login.defs
+    sed -i 's/^PASS_MIN_DAYS\s\+0/PASS_MIN_DAYS   10/' /etc/login.defs
+    echo "Password aging policy configured: Max age 90 days, min age 10 days, warn 5 days before expiration."
+}
+
+#  ensure root login via console only (no remote login loosers)
+configure_root_login() {
+    echo "Configuring root login policy..."
+
+    # Backup the current SSH configuration
+    cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+
+    # Disable root login via SSH
+    sed -i 's/^#PermitRootLogin\s\+yes/PermitRootLogin no/' /etc/ssh/sshd_config
+    systemctl restart sshd
+    echo "Root login via SSH has been disabled."
+}
+
+#  apply updates (better safe than sorry)
+apply_updates() {
+    echo "Applying system updates..."
+
+    # Update package lists and upgrade system
+    apt update && apt upgrade -y
+    echo "System updates applied."
+}
+
+# Run it all
+apply_updates
+configure_password_policy
+configure_account_lockout
+configure_authentication_policy
+configure_session_policy
+configure_password_aging
+configure_root_login
+
+echo "Yippeeeeeee Pam Has been done even tho I could of just done this in the normal script"
