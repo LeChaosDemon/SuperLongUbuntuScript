@@ -97,4 +97,4 @@ configure_session_policy
 configure_password_aging
 configure_root_login
 
-echo "Yippeeeeeee Pam Has been done even tho I could of just done this in the normal script"
+echo "Yippeeeeee Made by Jasmine J West. Pam Has been done even tho I could of just done this in the normal script"
