@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 startTime=$(date +"%s")
@@ -963,4 +962,4 @@ chmod 777 -R ~/Desktop/logs
 
 # yeps
 clear
-printTime "Yay I did it!!!!!"
+printTime "This script was made by Jasmine J West, if you used this for official matters or and didn't get my permission to do so... I will know because you didn't look over the script to see the obvious ip forwarding lolll"
