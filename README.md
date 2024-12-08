@@ -23,4 +23,9 @@ Only run script after ALL f-questions are done
 delete any users, add any to groups etc.
 
 
+The dummy proof .docx version is below
+
+https://docs.google.com/document/d/1sRhqX9TgzifeVfHlSjiFrCleOULXCgdNx5t9WHoituE/edit?usp=sharing
+
+
 Have fun!
