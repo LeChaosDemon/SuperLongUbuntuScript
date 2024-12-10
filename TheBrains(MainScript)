@@ -78,7 +78,7 @@ for (( i=0; i<$usersLength; i++ )); do
             echo -e "$pw\n$pw" | passwd ${users[${i}]}
             printTime "${users[${i}]} has been given the password '$pw'."
         else
-            default_password="Cyb3rC0nt3stL0Lol  # Replace with desired password
+            default_password="Cyb3rC0nt3stL0Lol"
             echo -e "$default_password\n$default_password" | passwd ${users[${i}]}
             printTime "${users[${i}]} has been given the password '$default_password'."
         fi
