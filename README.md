@@ -38,4 +38,10 @@ The pam file config .docx version is below
 https://docs.google.com/document/d/1d9YXSTvGNfODBD6Or5Rwx6_I70GjzDNnL78aMzYITO4/edit?usp=sharing
 
 
-Have fun!
+A short .docx Linux (Ubuntu process) Backdoor removal instruction is below
+
+https://docs.google.com/document/d/1P6qFwEp0ErOK0vAKdx4qmgRdfEsW0cnlc25gcNi32Ko/edit?usp=sharing
+
+
+Have fun!!
+-Jas
