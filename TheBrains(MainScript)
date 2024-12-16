@@ -190,16 +190,27 @@ echo -e "127.0.0.1 localhost\n127.0.1.1 $USER\n::1 ip6-localhost ip6-loopback\nf
 chmod 644 /etc/hosts
 printTime "HOSTS file has been set to defaults."
 
-clear
-chmod 777 /etc/lightdm/lightdm.conf
-cp /etc/lightdm/lightdm.conf ~/Desktop/backups/
-echo > /etc/lightdm/lightdm.conf
+# Backup the lightdm configuration file
+LIGHTDM_CONF="/etc/lightdm/lightdm.conf"
+BACKUP_DIR="/root/lightdm_backup"
+mkdir -p "$BACKUP_DIR"
+cp "$LIGHTDM_CONF" "$BACKUP_DIR/lightdm.conf.bak"
+echo "Backup of lightdm.conf created at $BACKUP_DIR/lightdm.conf.bak"
 
-# Updated configuration to allow users to see the login screen and manually log in
-echo -e '[SeatDefaults]\nallow-guest=false\ngreeter-hide-users=false\ngreeter-show-manual-login=true' >> /etc/lightdm/lightdm.conf
+# Fix LightDM configuration to enable autologin and manual login
+echo -e "[SeatDefaults]\nallow-guest=false\ngreeter-hide-users=false\ngreeter-show-manual-login=true\nautologin-user=<USERNAME>\nautologin-user-timeout=0" > "$LIGHTDM_CONF"
 
-chmod 644 /etc/lightdm/lightdm.conf
-printTime "LightDM login screen has been updated to show users and allow manual login without forcing it."
+# Replace <USERNAME> with the desired autologin user
+read -p "Enter the username to enable autologin: " AUTLOGIN_USER
+sed -i "s/ealderson/$AUTLOGIN_USER/" "$LIGHTDM_CONF"
+
+# Verify the configuration
+if grep -q "autologin-user=$AUTLOGIN_USER" "$LIGHTDM_CONF"; then
+    echo "LightDM configuration has been successfully updated for autologin with user: $AUTLOGIN_USER"
+else
+    echo "Failed to update LightDM configuration. Please check the file manually at $LIGHTDM_CONF"
+    exit 1
+fi
 
 clear
 find /bin/ -name "*.sh" -type f -delete
@@ -960,6 +971,6 @@ chmod 777 -R ~/Desktop/Comparatives/
 chmod 777 -R ~/Desktop/backups
 chmod 777 -R ~/Desktop/logs
 
-# yeps
+# Final message
 clear
-printTime "This script was made by Jasmine J West, if you used this for official matters or and didn't get my permission to do so... I will know because you didn't look over the script to see the obvious ip forwarding lolll"
+printTime "Script is done"
